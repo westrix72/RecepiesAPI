@@ -31,8 +31,24 @@ app.post("/comments", async (req, res) => {
     await fs.mkdir("data/comments", { recursive: true });
     await fs.writeFile(`data/comments/${id}.txt`, content);
 
-    console.log(content);
-    res.sendStatus(201);
+    res.status(201).json({
+        id: id
+    });
+});
+
+app.get("/comments/:id", async (req, res) => {
+    const id = req.params.id;    
+    let content;
+
+    try {
+        content = await fs.readFile(`data/comments/${id}.txt`, "utf-8");
+    } catch (err) {
+        return res.sendStatus(404);
+    }
+
+    res.json({
+        content: content
+    });
 });
 
 app.listen(3000, () => console.log("API Server is running"));
